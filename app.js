@@ -8,16 +8,20 @@ import {
   uploadMultipleFiles,
 } from "./controllers/uploadControllers.js";
 import { getImages } from "./controllers/imagesController.js";
+import viewsRouter from "./routes/viewsRouter.js";
 
 const app = express();
 const __dirname = path.resolve();
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/public", express.static(path.join(__dirname, "public")));
+
+app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 
 const port = process.env.PORT || 3000;
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
-app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/index.html");
-});
+
+app.get("/", viewsRouter);
 
 app.post("/upload-profile-pic", upload.single("profile_pic"), uploadFile);
 

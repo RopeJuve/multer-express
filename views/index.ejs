@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Multer</title>
+    <link href="public/index.css" rel="stylesheet" />
+    <script src="public/index.js" defer></script>
+  </head>
+
+  <body
+    class="bg-gray-300 max-w-[900px] mx-auto h-[100vh] text-gray-950 font-sans"
+  >
+    <h1 class="text-4xl text-center mb-[2rem]">Multer</h1>
+    <div class="flex flex-col gap-4 max-w-[400px] mx-auto items-center">
+      <form
+        action="/upload-profile-pic"
+        enctype="multipart/form-data"
+        method="POST"
+      >
+        <div
+          class="px-[2rem] py-[3rem] flex flex-col gap-2 border-dashed border-slate-900 border-[2px] items-center"
+        >
+          <label class="font-semibold">Select your profile picture:</label>
+          <input id="upload-file" name="profile_pic" type="file" />
+        </div>
+        <div
+          class="border-solid border-slate-900 border-[1px] mt-[1rem] cursor-pointer"
+        >
+          <input
+            class="w-full p-4 cursor-pointer"
+            type="submit"
+            value="Upload"
+          />
+        </div>
+      </form>
+      <form
+        action="/upload-cat-pics"
+        enctype="multipart/form-data"
+        method="POST"
+      >
+        <div
+          class="px-[2rem] py-[3rem] flex flex-col gap-2 border-dashed border-slate-900 border-[2px] items-center"
+        >
+          <label class="font-semibold">Select your cat pictures:</label>
+          <input multiple="multiple" name="cat_pics" type="file" />
+        </div>
+        <div class="border-solid border-slate-900 border-[1px] mt-[1rem]">
+          <input
+            class="p-4 w-full cursor-pointer"
+            type="submit"
+            value="Upload Cat Pics"
+          />
+        </div>
+      </form>
+      <img
+        id="img-to-upload"
+        src=""
+        alt="uploaded-picture"
+        class="w-[200px] h-[200px] object-cover hidden"
+      />
+    </div>
+    <div id="toast" class="fixed top-4 left-[10%] px-2 py-3 bg-green-400 rounded-xl text-white translate-x-[-1000px] transition-all ease-in-out duration-300">
+        <p id="message"></p>
+    </div>
+  </body>
+</html>
