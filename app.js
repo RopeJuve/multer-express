@@ -3,7 +3,11 @@ import dotenv from "dotenv";
 dotenv.config();
 import { upload } from "./multer/multer.js";
 import path from "path";
-import { pool } from "./db/db.js";
+import {
+  uploadFile,
+  uploadMultipleFiles,
+} from "./controllers/uploadControllers.js";
+import { getImages } from "./controllers/imagesController.js";
 
 const app = express();
 const __dirname = path.resolve();
@@ -15,54 +19,11 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
 
-app.post(
-  "/upload-profile-pic",
-  upload.single("profile_pic"),
-  async (req, res) => {
-    if (!req.file) {
-      return res.status(400).send("Please upload a file");
-    }
-    const { originalname } = req.file;
-    const filePath = `/uploads/${req.file.filename}`;
-    try {
-      const { rows } = await pool.query(
-        "INSERT INTO pictures (name, path) VALUES ($1, $2) RETURNING *",
-        [originalname, filePath]
-      );
-      console.log(rows);
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send("Server Error");
-    }
+app.post("/upload-profile-pic", upload.single("profile_pic"), uploadFile);
 
-    res.send(`<div><h2>Here's the picture:</h2><img src="${filePath}"/></div>`);
-  }
-);
+app.post("/upload-cat-pics", upload.array("cat_pics", 5), uploadMultipleFiles);
 
-app.post("/upload-cat-pics", upload.array("cat_pics", 5), async (req, res) => {
-  if (!req.files) {
-    return res.status(400).send("Please upload a file");
-  }
-  try {
-    const queries = req.files.map(file => {
-        const query = {
-          text: "INSERT INTO pictures (name, path) VALUES ($1, $2) RETURNING *",
-          values: [file.originalname, `/uploads/${file.filename}`]
-        };
-        return pool.query(query);
-      });
-    
-      const results = await Promise.all(queries);
-      console.log(results.map(result => result.rows));
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
-  }
-  const files = req.files.map((file) => {
-    return `<img src="/uploads/${file.filename}" />`;
-  });
-  res.send(`<div><h2>Here are the pictures:</h2>${files.join("")}</div>`);
-});
+app.get("/get-pictures", getImages);
 
 app.listen(port, () => {
   console.log(`Server is running on port http://localhost:${port}`);
